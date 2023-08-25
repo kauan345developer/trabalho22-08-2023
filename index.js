@@ -8,41 +8,59 @@ const local = localStorage
 let contatcts = []
 let id = 0
 
-btnCadsatrar.addEventListener("click",function(){
+function createRow(contact){
     const btnRemove = document.createElement("button")
     btnRemove.innerText ="remover"
-    id++
+    
     const newTr =document.createElement("tr")
     table.appendChild(newTr)
+
     const newTdId = document.createElement("td")
     const newTdCel = document.createElement("td")
     const newTdName = document.createElement("td")
     const newTdBtn = document.createElement("td")
-    newTr.id = id
-    newTdId.innerText = id
-    newTdCel.innerText = inCel.value
-    newTdName.innerText = inName.value
+    newTr.id = contact.oId
+    newTdId.innerText = contatcts.indexOf(contact)+1
+    newTdCel.innerText = contact.Telefone
+    newTdName.innerText = contact.nome
     newTdBtn.appendChild(btnRemove)
     newTr.append(newTdId,newTdName,newTdCel,newTdBtn)
-    const save={
-        oId: id,
-        Telefone:inCel.value,
-        nome:inName.value
-     }
-
-    contatcts.push(save)
-
-    const saveString = JSON.stringify(contatcts);
-
-
-    local.setItem("contacts",saveString)
+    
 
     btnRemove.addEventListener('click',function(){
        const pai = btnRemove.parentElement
        table.removeChild(pai.parentElement)
+
+       contatcts = contatcts.filter(function(param){
+        return param.oId !== contact.oId
+       })
+       local.setItem("contacts",JSON.stringify(contatcts))
     })
+}
 
-    inCel.value =""
+function render() {
+    const storage  = local.getItem("contacts")
+    contatcts = JSON.parse(storage)
+    contatcts.forEach(function(param){
+        createRow(param)
+    })
+}
+
+btnCadsatrar.addEventListener("click", function () {
+    id++
+    const save = {
+      oId: id,
+      Telefone: inCel.value,
+      nome: inName.value
+    }
+  
+    contatcts.push(save)
+    localStorage.setItem("contacts", JSON.stringify(contatcts))
+  
+    createRow(save)
+  
+    inCel.value = ""
     inName.value = ""
-})
+  })
 
+  render()
