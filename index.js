@@ -40,7 +40,9 @@ function createRow(contact){
 
 function render() {
     const storage  = local.getItem("contacts")
+    if(storage){
     contatcts = JSON.parse(storage)
+    }
     contatcts.forEach(function(param){
         createRow(param)
     })
